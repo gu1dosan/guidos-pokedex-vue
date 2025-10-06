@@ -16,6 +16,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "axios": "^1.12.2",
     "react-audio-player": "^0.17.0",
     "vue": "^3.5.18",

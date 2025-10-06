@@ -137,43 +137,40 @@ function openPokemonModal(p: PokemonDetailed) {
 <template>
   <v-app>
     <v-main>
-      <v-container>
-        <h3 class="text-h6 font-weight-regular mb-4">Filter by type:</h3>
-        <v-card variant="outlined" class="pa-2 mb-10">
+      <v-container class="text-center page-content">
+        <h3 class="font-weight-medium mb-2 filter-by-text">Filter by type:</h3>
+        <div class="pa-2 filter-buttons">
           <v-btn
             v-for="type in types"
             :key="type.name"
             :color="typeColors[type.name]"
-            :variant="chosenTypes.includes(type.name) ? 'flat' : 'text'"
-            class="ma-1 text-capitalize"
+            :variant="chosenTypes.includes(type.name) ? 'outlined' : 'text'"
+            class="ma-1 uppercase filter-button font-weight-medium"
             @click="selectType(type.name)"
           >
             {{ type.name }}
           </v-btn>
-        </v-card>
-
-        <h2 class="text-h4 font-weight-regular mb-6">{{ pageTitle }}</h2>
-
-        <v-row>
-          <v-col v-if="loading" v-for="n in limit" :key="`skel-${n}`" cols="6" sm="4" md="3" lg="2">
-            <v-skeleton-loader type="image, list-item-two-line"></v-skeleton-loader>
+        </div>
+        <h4 class="number-of-pokemon">{{ pageTitle }}</h4>
+        <v-row no-gutters>
+          <v-col v-if="loading" v-for="n in limit" :key="`skel-${n}`" cols="6" sm="3" md="2" xl="1">
+            <v-skeleton-loader class="ma-2" type="image, list-item-two-line"></v-skeleton-loader>
           </v-col>
-          <v-col v-else v-for="p in pokemon" :key="p.id" cols="6" sm="4" md="3" lg="2">
+          <v-col v-else v-for="p in pokemon" :key="p.id" cols="6" sm="3" md="2" xl="1">
             <v-card
-              class="pokemon-card"
-              :style="{ backgroundColor: typeColors[p.types[0].type.name] }"
+              class="pokemon-card ma-2"
+              variant="flat"
+              :style="{ background: `linear-gradient(45deg, ${typeColors[p.types[0].type.name]} 85%${p.types[1] ? `, ${typeColors[p.types[1].type.name]} 85%` : ''})` }"
               @click="openPokemonModal(p)"
             >
               <div class="pokemon-card-content">
-                <div class="pokemon-card-background" :style="{ background: `linear-gradient(45deg, ${typeColors[p.types[0].type.name]} 85%${p.types[1] && `, ${typeColors[p.types[1].type.name]} 85%`})`}">
-                  <v-img src="/pokeball.svg" class="pokeball-bg" />
-                </div>
-                <v-img :src="p.sprites.front_default" class="pokemon-sprite" />
                 <div class="pokemon-info">
-                  <div class="font-weight-bold text-white">{{ p.name }}</div>
-                  <div class="text-white text-caption">#{{ zeroPad(p.id, 3) }}</div>
+                  <div class="pokemon-info-name">{{ p.name }}</div>
+                  <div class="pokemon-info-id">#{{ zeroPad(p.id, 3) }}</div>
                 </div>
+                <img :src="p.sprites.front_default" class="pokemon-sprite" />
               </div>
+              <img src="/pokeball.svg" class="pokeball-bg" />
             </v-card>
           </v-col>
         </v-row>
@@ -182,18 +179,29 @@ function openPokemonModal(p: PokemonDetailed) {
           v-if="!loading && totalPokemon > limit"
           v-model="page"
           :length="Math.ceil(totalPokemon / limit)"
-          :total-visible="5"
-          class="mt-10"
+          :total-visible="6"
+          class="mt-6"
+          rounded="circle"
+          variant="flat"
+          active-color="primary"
+          density="comfortable"
         ></v-pagination>
 
-        <v-dialog v-model="pokemonModalOpen" max-width="500">
-          <v-card v-if="chosenPokemon">
-            <v-card-title :style="{ backgroundColor: typeColors[chosenPokemon.types[0].type.name] }" class="text-h5 pa-4 text-white">
-              {{ chosenPokemon.name }}
-              <span class="font-weight-light ml-2">#{{ zeroPad(chosenPokemon.id, 3) }}</span>
+        <v-dialog v-model="pokemonModalOpen" max-width="450" >
+          <v-card v-if="chosenPokemon" class="rounded-xl overflow-hidden pokemon-modal">
+            <v-card-title 
+              :style="{ backgroundColor: typeColors[chosenPokemon.types[0].type.name] }" 
+              class="pa-4 text-white d-flex align-center modal-header"
+            >
+              <div class="modal-pokemon-title">
+                {{ chosenPokemon.name }}
+                <span class="opacity-70 font-weight-regular ml-2">#{{ zeroPad(chosenPokemon.id, 3) }}</span>
+              </div>
+              <v-spacer></v-spacer>
+              <v-btn icon="mdi-close" variant="text" @click="pokemonModalOpen = false"></v-btn>
             </v-card-title>
             <v-card-text class="pt-4">
-              <v-img :src="chosenPokemon.sprites.other['official-artwork'].front_default" height="250" contain></v-img>
+              <v-img :src="chosenPokemon.sprites.other['official-artwork'].front_default" maxHeight="300" contain></v-img>
               <audio
                 v-if="chosenPokemon.cries.latest"
                 style="width: 100%; margin-top: 1rem;"
@@ -205,27 +213,53 @@ function openPokemonModal(p: PokemonDetailed) {
 
               <v-row class="mt-4">
                 <v-col cols="6">
-                  <h4 class="text-h6 mb-2">Stats</h4>
-                  <div v-for="stat in chosenPokemon.stats" :key="stat.stat.name">
-                    {{ capitalizeFirstLetter(stat.stat.name) }}: {{ stat.base_stat }}
+                  <h4 
+                    class="mb-1 modal-subtitle" 
+                    :style="{ color: typeColors[chosenPokemon.types[0].type.name] }"
+                  >
+                    Base Stats
+                  </h4>
+                  <div v-for="stat in chosenPokemon.stats" :key="stat.stat.name" class="stat-row">
+                    <span class="stat-name">{{ capitalizeFirstLetter(stat.stat.name.replace('-', ' ')) }}</span>
+                    <span class="stat-value">{{ stat.base_stat }}</span>
                   </div>
                 </v-col>
                 <v-col cols="6">
-                  <h4 class="text-h6 mb-2">Types</h4>
-                  <v-chip v-for="t in chosenPokemon.types" :key="t.type.name" :color="typeColors[t.type.name]" class="mr-2 mb-2 text-capitalize">
-                    {{ capitalizeFirstLetter(t.type.name) }}
-                  </v-chip>
-                  <h4 class="text-h6 mb-2 mt-4">Abilities</h4>
-                  <div v-for="ability in chosenPokemon.abilities" :key="ability.ability.name">
+                  <h4 
+                    class="mb-1 modal-subtitle"
+                    :style="{ color: typeColors[chosenPokemon.types[0].type.name] }"
+                  >
+                    Type
+                  </h4>
+                  <div class="types-list">
+                    <v-chip v-for="t in chosenPokemon.types" :key="t.type.name" class="mb-1 type-chip text-md" variant="flat" density="compact" size="large" :color="typeColors[t.type.name]">
+                      {{ capitalizeFirstLetter(t.type.name) }}
+                    </v-chip>
+                  </div>
+                  
+                  <h4 
+                    class="mb-1 mt-4 modal-subtitle"
+                    :style="{ color: typeColors[chosenPokemon.types[0].type.name] }"
+                  >
+                    Abilities
+                  </h4>
+                  <div v-for="ability in chosenPokemon.abilities" :key="ability.ability.name" class="ability-name">
                     {{ capitalizeFirstLetter(ability.ability.name) }}
-                    <span v-if="ability.is_hidden">(Hidden)</span>
+                    <span v-if="ability.is_hidden" class="">(hidden)</span>
                   </div>
                 </v-col>
               </v-row>
             </v-card-text>
-            <v-card-actions>
+            <v-divider></v-divider>
+            <v-card-actions class="pa-2">
               <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="pokemonModalOpen = false">Close</v-btn>
+              <v-btn 
+                :color="typeColors[chosenPokemon.types[0].type.name]" 
+                variant="text"
+                @click="pokemonModalOpen = false"
+              >
+                Close
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -235,9 +269,31 @@ function openPokemonModal(p: PokemonDetailed) {
 </template>
 
 <style>
-/* Global style override to make pagination buttons circular */
-.v-pagination .v-btn {
-  border-radius: 50% !important;
+
+.page-content {
+  max-width: 100% !important;
+  /* margin: auto; */
+}
+
+.filter-by-text {
+  font-size: 1.5rem;
+}
+
+.filter-buttons {
+  border: 1px solid lightgrey;
+  border-radius: 16px;
+}
+
+.filter-button {
+  font-weight: 500;
+  letter-spacing: normal !important;
+  padding: 6px 8px !important;
+}
+
+.number-of-pokemon {
+  margin: 32px 0 24px 0;
+  font-size: 2.125rem;
+  font-weight: 500;
 }
 
 /* Scoped styles for the Pokemon Card */
@@ -246,56 +302,90 @@ function openPokemonModal(p: PokemonDetailed) {
   overflow: hidden;
   position: relative;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  /* box-shadow: 0 4px 12px rgba(0,0,0,0.1); */
+  height: 192px;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .pokemon-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transform: scale(1.03);
+  box-shadow: 0 0px 16px rgba(0,0,0,0.2);
 }
 
 .pokemon-card-content {
   position: relative;
-  height: 150px; /* Adjust height as needed */
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-}
-
-.pokemon-card-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  /* justify-content: flex-end; */
 }
 
 .pokeball-bg {
   position: absolute !important;
-  bottom: -20px;
-  right: -20px;
-  width: 100px;
-  height: 100px;
-  opacity: 0.2;
+  bottom: -74px;
+  right: calc(-140px + 35%);
+  width: 120%;
+  height: 120%;
+  opacity: 0.3;
   z-index: 2;
 }
 
 .pokemon-sprite {
-  position: absolute !important;
-  top: 5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px;
-  height: 100px;
+  /* width: 100px; */
+  height: 140px;
+  width: inherit;
+  max-width: 140px;
+  margin: -8px;
+  margin-top: -20px;
+  margin-left: auto;
   z-index: 3;
 }
 
 .pokemon-info {
+  text-align: left;
   position: relative;
   z-index: 4;
-  padding: 8px;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+  padding: 0px 8px;
+}
+.pokemon-info-name {
+  margin-top: 16px;
+  /* font-weight: bold; */
+  color: white;
+  font-size: 1.5rem;
+}
+.pokemon-info-id {
+  /* color: white; */
+  font-weight: 500;
+  font-size: 1.25rem;
+  opacity: 0.4;
+}
+
+.modal-header {
+  font-size: 1.75rem !important;
+  font-weight: 500;
+}
+
+.modal-pokemon-title span {
+  font-size: 1.3rem;
+}
+
+.modal-subtitle {
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.types-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.ability-name {
+  padding: 2px 0;
 }
 </style>
