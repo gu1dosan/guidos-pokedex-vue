@@ -138,6 +138,11 @@ function openPokemonModal(p: PokemonDetailed) {
   <v-app>
     <v-main>
       <v-container class="text-center page-content">
+        <div class="framework-switcher">
+          <a href="https://guidos-pokedex-react.netlify.app" class="framework-link">React</a>|
+          <span class="framework-link active">Vue</span>
+          <!-- |<a href="https://guidos-pokedex-svelte.netlify.app" class="framework-link">Svelte</a> -->
+        </div>
         <h3 class="font-weight-medium mb-2 filter-by-text">Filter by type:</h3>
         <div class="pa-2 filter-buttons">
           <v-btn
@@ -273,6 +278,25 @@ function openPokemonModal(p: PokemonDetailed) {
 .page-content {
   max-width: 100% !important;
   /* margin: auto; */
+}
+
+.framework-switcher {
+  padding: 16px;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+.framework-link {
+  color: #007bff;
+  margin: 0 12px;
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+.framework-link.active {
+  color: black;
+  font-weight: bold;
+  cursor: default;
 }
 
 .filter-by-text {
