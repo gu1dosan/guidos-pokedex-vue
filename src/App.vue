@@ -139,6 +139,10 @@ function openPokemonModal(p: PokemonDetailed) {
     <v-main>
       <v-container class="text-center page-content">
         <div class="framework-switcher">
+          <div class="title-container">
+            <img src="/pokemon-icon.webp" alt="Pokeball Icon" class="pokeball-icon" />
+            <h1 class="h1 font-bold tracking-tight">Guido's Pokédex</h1>
+          </div>
           <a href="https://guidos-pokedex-react.netlify.app" class="framework-link">React</a>|
           <span class="framework-link active">Vue</span>
           <!-- |<a href="https://guidos-pokedex-svelte.netlify.app" class="framework-link">Svelte</a> -->
@@ -185,11 +189,12 @@ function openPokemonModal(p: PokemonDetailed) {
           v-model="page"
           :length="Math.ceil(totalPokemon / limit)"
           :total-visible="6"
-          class="mt-6"
+          class="mt-4"
           rounded="circle"
           variant="flat"
           active-color="primary"
           density="comfortable"
+          size="small"
         ></v-pagination>
 
         <v-dialog v-model="pokemonModalOpen" max-width="450" >
@@ -299,6 +304,36 @@ function openPokemonModal(p: PokemonDetailed) {
   cursor: default;
 }
 
+.title-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  color: #333; 
+}
+
+.title-container h1 {
+  font-size: 2.5rem; /* 40px */
+  font-weight: bold;
+  margin: 0;
+}
+
+.pokeball-icon {
+  width: 48px;
+  height: 48px;
+  animation: spin 8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .filter-by-text {
   font-size: 1.5rem;
 }
@@ -315,7 +350,7 @@ function openPokemonModal(p: PokemonDetailed) {
 }
 
 .number-of-pokemon {
-  margin: 32px 0 24px 0;
+  margin: 24px 0 12px 0;
   font-size: 2.125rem;
   font-weight: 500;
 }
