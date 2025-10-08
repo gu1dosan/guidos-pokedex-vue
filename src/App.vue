@@ -145,7 +145,7 @@ function openPokemonModal(p: PokemonDetailed) {
           </div>
           <a href="https://guidos-pokedex-react.netlify.app" class="framework-link">React</a>|
           <span class="framework-link active">Vue</span>
-          <!-- |<a href="https://guidos-pokedex-svelte.netlify.app" class="framework-link">Svelte</a> -->
+          |<a href="https://guidos-pokedex-svelte.netlify.app" class="framework-link">Svelte</a>
         </div>
         <h3 class="font-weight-medium mb-2 filter-by-text">Filter by type:</h3>
         <div class="pa-2 filter-buttons">
@@ -436,6 +436,10 @@ function openPokemonModal(p: PokemonDetailed) {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+}
+
+.types-list .type-chip {
+  color: white !important;
 }
 
 .stat-row {
