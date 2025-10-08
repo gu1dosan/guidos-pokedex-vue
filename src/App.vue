@@ -144,7 +144,7 @@ function openPokemonModal(p: PokemonDetailed) {
             <h1 class="h1 font-bold tracking-tight">Guido's Pokédex</h1>
           </div>
           <a href="https://guidos-pokedex-react.netlify.app" class="framework-link">React</a>|
-          <span class="framework-link active">Vue</span>
+          <span class="framework-link-active">Vue</span>
           |<a href="https://guidos-pokedex-svelte.netlify.app" class="framework-link">Svelte</a>
         </div>
         <h3 class="font-weight-medium mb-2 filter-by-text">Filter by type:</h3>
@@ -189,7 +189,7 @@ function openPokemonModal(p: PokemonDetailed) {
           v-model="page"
           :length="Math.ceil(totalPokemon / limit)"
           :total-visible="6"
-          class="mt-4"
+          class="mt-3"
           rounded="circle"
           variant="flat"
           active-color="primary"
@@ -214,7 +214,7 @@ function openPokemonModal(p: PokemonDetailed) {
               <v-img :src="chosenPokemon.sprites.other['official-artwork'].front_default" maxHeight="300" contain></v-img>
               <audio
                 v-if="chosenPokemon.cries.latest"
-                style="width: 100%; margin-top: 1rem;"
+                style="width: 100%;"
                 :src="chosenPokemon.cries.latest"
                 controls
                 volume="0.05"
@@ -282,7 +282,7 @@ function openPokemonModal(p: PokemonDetailed) {
 
 .page-content {
   max-width: 100% !important;
-  /* margin: auto; */
+  padding: 24px 24px 0 24px !important;
 }
 
 .framework-switcher {
@@ -298,8 +298,11 @@ function openPokemonModal(p: PokemonDetailed) {
   text-decoration: none;
   font-size: 1.1rem;
 }
-.framework-link.active {
-  color: black;
+.framework-link-active {
+  /* color: black; */
+  margin: 0 12px;
+  text-decoration: none;
+  font-size: 1.1rem;
   font-weight: bold;
   cursor: default;
 }
@@ -310,7 +313,7 @@ function openPokemonModal(p: PokemonDetailed) {
   justify-content: center;
   gap: 1rem;
   margin-bottom: 1rem;
-  color: #333; 
+  /* color: #333;  */
 }
 
 .title-container h1 {
